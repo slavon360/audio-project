@@ -1,0 +1,11 @@
+.PlayButtonWrp {
+    font-size: 30px;
+    outline: none;
+    background: transparent;
+    padding: 0;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transform: translateY(-5px);
+    margin-left: 15px;
+}

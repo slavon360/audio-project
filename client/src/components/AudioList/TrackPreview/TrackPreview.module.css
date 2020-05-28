@@ -1,0 +1,37 @@
+.TrackPreviewWrp {
+    background-color: #dfe7ef;
+    text-align: center;
+}
+.TrackPreviewContainer {
+    display: inline-block;
+    width: 340px;
+}
+.ButtonsPanel, .ArtistTitlePanel {
+    padding: 10px 0;
+    display: inline-block;
+    vertical-align: top;
+}
+.ArtistTitlePanel {
+    width: 180px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: left;
+}
+.ButtonsPanel {
+    max-width: 160px;
+}
+.NextButton, .PrevButton {
+    margin-right: 10px;
+    margin-bottom: 0;
+}
+.PrevButton {
+    margin-left: 10px;
+}
+.ArtistTitlePanel .ArtistName,
+.ArtistTitlePanel .TrackTitle {
+    color: #71829e;
+}
+.ArtistTitlePanel .ArtistName {
+    font-weight: 900;
+}
