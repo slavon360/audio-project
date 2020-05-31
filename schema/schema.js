@@ -35,7 +35,8 @@ const TrackType = new GraphQLObjectType({
         year: { type: new GraphQLNonNull(GraphQLString) },
         genre: { type: new GraphQLNonNull(GraphQLString) },
         rate: { type: GraphQLInt },
-        fileName: { type: new GraphQLNonNull(GraphQLString) }
+        fileName: { type: new GraphQLNonNull(GraphQLString) },
+        picture: { type: GraphQLString }
     })
 });
 

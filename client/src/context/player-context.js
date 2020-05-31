@@ -4,7 +4,11 @@ export default React.createContext({
     audio_api: null,
     playing_track_id: null,
     tracks: null,
+    should_refetch_tracks: false,
     setAudioApi: (audio_api) => {},
     setPlayingTrackId: (playing_track_id) => {},
-    setTracksList: (tracks) => {}
+    setTracksList: (tracks) => {},
+    setShouldRefetchTracksValue: (value) => {},
+    playTrack: (fileName, track_id) => {},
+    pauseTrack: () => {}
 });

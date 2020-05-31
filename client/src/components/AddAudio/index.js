@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+
+import PlayerContext from '../../context/player-context';
 
 const AddAudio = () => {
     const [selected_file, selectFile] = useState(null);
+
+    const { setShouldRefetchTracksValue } = useContext(PlayerContext);
 
     const uploadFiles = () => {
         const data = new FormData();
@@ -13,6 +17,7 @@ const AddAudio = () => {
         axios.post('http://localhost:4004/add-audio', data)
             .then(response => {
                 console.log(response);
+                setShouldRefetchTracksValue(true);
             })
             .catch(error => {
                 console.log(error);

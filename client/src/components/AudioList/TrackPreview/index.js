@@ -1,4 +1,5 @@
 import React from 'react';
+import cx from 'classnames';
 
 import PlayButton from '../../AudioPlayer/components/PlayButton';
 import { getArtistNames } from '../../../utils';
@@ -6,7 +7,8 @@ import { getArtistNames } from '../../../utils';
 import styles from './TrackPreview.module.css';
 
 const TrackPreview = ({
-	track: { title, album, artist, fileName, id },
+	list_number,
+	track: { title, artist, fileName, id },
 	playTrack,
 	pauseTrack,
 	is_playing
@@ -23,10 +25,11 @@ const TrackPreview = ({
 	
 	return (
 		<div className={styles.TrackPreviewWrp}>
-			<div className={styles.TrackPreviewContainer}>
+			<div className={cx(styles.TrackPreviewContainer, { [styles.Active]: is_playing})}>
+				<span className={styles.ListNumber}>{list_number})</span>
 				<div className={styles.ArtistTitlePanel}>
-					<div className={styles.ArtistName}>{ artistNames }</div>
-					<div className={styles.TrackTitle}>{ title }</div>
+					<div className={styles.ArtistName} title={artistNames}>{ artistNames }</div>
+					<div className={styles.TrackTitle} title={title}>{ title }</div>
 				</div>
 				<div className={styles.ButtonsPanel}>
 					<PlayButton

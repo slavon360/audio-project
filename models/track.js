@@ -8,7 +8,8 @@ const trackSchema = new Schema({
 	year: String,
 	genre: String,
 	rate: Number,
-	fileName: String
+	fileName: String,
+	picture: String
 });
 
 module.exports = mongoose.model('Track', trackSchema);

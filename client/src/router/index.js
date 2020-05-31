@@ -1,16 +1,17 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 
 import Routes from './Routes';
 import Header from '../components/Header';
+import Layer from '../components/Layer';
 
 const RouterComponent = () => (
 	<BrowserRouter>
-		<Fragment>
+		<Layer>
 			<Header />
 			{renderRoutes(Routes)}
-		</Fragment>
+		</Layer>
 	</BrowserRouter>
 );
 

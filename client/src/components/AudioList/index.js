@@ -19,31 +19,29 @@ const GET_TRACKS = gql`
 			album
 			rate
 			fileName
+			picture
 		}
 	}
 `;
 
-const AudioList = () => {
+const AudioList = ({ history }) => {
 	const { loading: loading_tracks, error: error_tracks, data: data_tracks = {}, refetch } = useQuery(GET_TRACKS);
 	const { tracks } = data_tracks;
 	const {
 		playing_track_id,
 		tracks: tracks_list,
+		should_refetch_tracks,
 		setTracksList,
 		playTrack,
-		pauseTrack
+		pauseTrack,
+		setShouldRefetchTracksValue
 	} = useContext(PlayerContext);
-	useEffect(() => {
-		if (tracks) {
-			setTracksList(tracks);
-		}
-	}, [tracks])
-	console.log('AudioList');
 	const renderTracks = (tracks) => (
 		<div className={styles.AudioListWrp}>
-			{tracks.map(track => (
+			{tracks.map((track, index) => (
 				<TrackPreview
 					key={track.id}
+					list_number={index + 1}
 					track={track}
 					is_playing={playing_track_id === track.id}
 					playTrack={playTrack}
@@ -52,6 +50,22 @@ const AudioList = () => {
 			))}
 		</div>);
 	
+	useEffect(() => {
+		if (tracks) {
+			setTracksList(tracks);
+		}
+	}, [tracks]);
+
+	if (should_refetch_tracks && tracks) {
+		refetch()
+			.then(() => {
+				setShouldRefetchTracksValue(false);
+			})
+			.catch(error => {
+				console.warn(error);
+			});
+	}
+
 	if (tracks && tracks.length) {
 		return renderTracks(tracks);
 	}

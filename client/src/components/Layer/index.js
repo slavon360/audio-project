@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { withRouter } from 'react-router-dom';
 
 import PlayerContext from '../../context/player-context';
 import AudioPlayer from '../AudioPlayer';
 import styles from './Layer.module.css';
 
-const Layer = ({ children }) => {
+const Layer = ({ children, history }) => {
+	const [ should_refetch_tracks, setShouldRefetchTracksValue ] = useState(false);
 	const [ current_track, setCurrentTrack ] = useState(null);
 	const [ playing_track_id, setPlayingTrackId ] = useState(null);
 	const [ tracks, setTracksList ] = useState(null);
@@ -90,7 +92,7 @@ const Layer = ({ children }) => {
 			}
 		});
 	}
-
+	
 	useEffect(() => {
 		if (playing_track_id) {
 			const active_track = tracks.find(track => track.id === playing_track_id);
@@ -98,6 +100,17 @@ const Layer = ({ children }) => {
 			setCurrentTrack(active_track);
 		}
 	}, [playing_track_id]);
+
+	useEffect(() => {
+		const unlisten = history.listen((location, action) => {
+			if (location.pathname === '/') {
+				setShouldRefetchTracksValue(true);
+			}
+		});
+		return () => {
+			unlisten();
+		} 
+	});
 
 	if (!audio_api) {
 		initAudio();
@@ -109,10 +122,12 @@ const Layer = ({ children }) => {
 				playing_track_id,
 				audio_api,
 				tracks,
+				should_refetch_tracks,
 				setPlayingTrackId,
 				setTracksList,
 				playTrack,
-				pauseTrack
+				pauseTrack,
+				setShouldRefetchTracksValue
 			}}
 		>
 			<div className={styles.LayerWrp}>
@@ -127,4 +142,4 @@ const Layer = ({ children }) => {
 		);
 };
 
-export default Layer;
+export default withRouter(Layer);

@@ -1,0 +1,13 @@
+.BarContainer {
+    height: 6px;
+    width: 100%;
+    cursor: pointer;
+    background-color: #d0d8e6;
+    display: inline-block;
+    border-radius: 10px;
+}
+.BarProgress {
+    height: inherit;
+    background-color: #a3b3ce;
+    border-radius: 10px;
+}

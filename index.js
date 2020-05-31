@@ -44,6 +44,22 @@ const getArtistsPromises = artist_names => {
 	});
 };
 
+const writeImage = (picture, album) => {
+	const { data, format } = picture;
+	const buffer = Buffer.from(data, 'base64');
+	const img_file_name = `${album}.${format}`;
+	
+	return new Promise((resolve, reject) => {
+		fs.writeFile(`./public/pictures/${img_file_name}`, buffer, (error, a) => {
+			if (error) {
+				return reject(error);
+			} else {
+				return resolve(img_file_name);
+			}
+		});
+	});
+};
+
 mongoose.connect('mongodb://localhost/audio-project');
 
 const storage = multer.diskStorage({
@@ -51,7 +67,7 @@ const storage = multer.diskStorage({
 		callback(null, './public/audio');
 	},
 	filename (req, file, callback) {
-		console.log(file);
+		console.log('file: ', file);
 		file_name = file.originalname;
 		callback(null, file_name);
 	} 
@@ -79,31 +95,57 @@ app.post('/add-audio', (req, res) => {
 			if (error) {
 				console.log(error);
 			} else {
-				const { artist, album, year, genre, title } = metadata;
-				const artists_promises = getArtistsPromises(artist);
+				console.log(metadata);
+				const { artist, album, year, genre, title, picture } = metadata;
+				const artist_names = artist && artist.length ? artist : ['Unknown Artist'];
+				const artists_promises = getArtistsPromises(artist_names);
+				const genre_data = genre.join();
 				
-				console.log('artists_promises: ', artists_promises);
 				Promise.all(artists_promises)
 					.then(([artist_data]) => {
-						console.log('artist_data: ', artist_data);
-						const genre_data = genre.join();
-						const track = new Tracks({
-							artistsIds: artist_data.map(art_t => art_t._id),
-							album,
-							year,
-							genre: genre_data,
-							title,
-							fileName: file_name
-						});
+						if (picture && picture[0]) {
+							writeImage(picture[0], album)
+								.then(picture_name => {
+									const track = new Tracks({
+										artistsIds: artist_data.map(art_t => art_t._id),
+										album,
+										year,
+										genre: genre_data,
+										title,
+										fileName: file_name,
+										picture: picture_name
+									});
 
-						track.save()
-							.then(({ title }) => {
-								// console.log(title);
-								res.end('file was uploaded');
-							})
-							.catch(error => {
-								console.log(error);
+									track.save()
+										.then(({ title }) => {
+											res.end('file was uploaded');
+										})
+										.catch(error => {
+											console.log(error);
+										});
+								})
+								.catch(error => {
+									throw new Error(error);
+								});
+						} else {
+							const track = new Tracks({
+								artistsIds: artist_data.map(art_t => art_t._id),
+								album,
+								year,
+								genre: genre_data,
+								title,
+								fileName: file_name,
 							});
+
+							track.save()
+								.then(({ title }) => {
+									res.end('file was uploaded');
+								})
+								.catch(error => {
+									console.log(error);
+								});
+						}
+						
 					})
 					.catch((error) => {
 						throw new Error(error);

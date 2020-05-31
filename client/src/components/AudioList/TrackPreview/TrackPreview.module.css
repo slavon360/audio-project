@@ -1,37 +1,60 @@
 .TrackPreviewWrp {
-    background-color: #dfe7ef;
-    text-align: center;
+    
 }
+
 .TrackPreviewContainer {
-    display: inline-block;
-    width: 340px;
-}
-.ButtonsPanel, .ArtistTitlePanel {
     padding: 10px 0;
+    cursor: pointer;
+}
+
+.TrackPreviewContainer:hover .ArtistName,
+.TrackPreviewContainer.Active .ArtistName,
+.TrackPreviewContainer:hover .TrackTitle,
+.TrackPreviewContainer.Active .TrackTitle,
+.TrackPreviewContainer:hover .ListNumber,
+.TrackPreviewContainer.Active .ListNumber {
+    color: #fff;
+}
+
+.ListNumber {
+    display: inline-block;
+    vertical-align: top;
+    width: 20px;
+    font-size: 18px;
+    padding: 0 20px 0 10px;
+}
+
+.ButtonsPanel, .ArtistTitlePanel {
     display: inline-block;
     vertical-align: top;
 }
+
 .ArtistTitlePanel {
-    width: 180px;
+    width: 200px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     text-align: left;
 }
+
 .ButtonsPanel {
     max-width: 160px;
 }
+
 .NextButton, .PrevButton {
     margin-right: 10px;
     margin-bottom: 0;
 }
+
 .PrevButton {
     margin-left: 10px;
 }
+
 .ArtistTitlePanel .ArtistName,
-.ArtistTitlePanel .TrackTitle {
+.ArtistTitlePanel .TrackTitle, .ListNumber {
     color: #71829e;
 }
+
 .ArtistTitlePanel .ArtistName {
     font-weight: 900;
 }
