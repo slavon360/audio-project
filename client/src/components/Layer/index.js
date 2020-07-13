@@ -3,44 +3,47 @@ import { withRouter } from 'react-router-dom';
 
 import PlayerContext from '../../context/player-context';
 import AudioPlayer from '../AudioPlayer';
+import AudioService from '../../Audio';
 import styles from './Layer.module.css';
 
 const Layer = ({ children, history }) => {
 	const [ should_refetch_tracks, setShouldRefetchTracksValue ] = useState(false);
-	const [ current_track, setCurrentTrack ] = useState(null);
+	const [ current_track, setCurrentTrack ] = useState(false);
 	const [ playing_track_id, setPlayingTrackId ] = useState(null);
 	const [ tracks, setTracksList ] = useState(null);
 	const [ audio_api, setAudioApi ] = useState(null);
 	const initAudio = () => {
-		const audio_instance = new Audio();
+		const audio_instance = new AudioService();
 
 		setAudioApi(audio_instance);
 	};
 	const playTrack = (fileName, track_id) => {
-		const audio_src = audio_api.src;
+		const audio_src = audio_api.audio_src;
 		const current_src = `${process.env.REACT_APP_SERVER_HOST_URL}/audio/${fileName}`;
 
 		setPlayingTrackId(track_id);
 
 		if (audio_src !== encodeURI(current_src)) {
-			audio_api.src = current_src;
+			audio_api.loadSrc(current_src);
+			// audio_api.src = current_src;
 		}
 		
-		audio_api.play();
+		// audio_api.play();
 	};
 	const pauseTrack = () => {
 		setPlayingTrackId(null);
-		audio_api.pause();
+		audio_api.stopAudio();
 	};
+
+	console.log('current_track from Layer: ', current_track);
 	const nextTrack = () => {
+		console.log(current_track);
 		const { id } = current_track;
 
 		tracks.find((track, index) => {
 			if (id === track.id) {
 				const next_track = tracks[index + 1];
 				const first_track = tracks[0];
-
-				console.log(next_track, first_track, index);
 
 				if (next_track) {
 					setCurrentTrack(next_track);
@@ -96,21 +99,21 @@ const Layer = ({ children, history }) => {
 	useEffect(() => {
 		if (playing_track_id) {
 			const active_track = tracks.find(track => track.id === playing_track_id);
-
+			console.log('active_track: ', active_track);
 			setCurrentTrack(active_track);
 		}
 	}, [playing_track_id]);
 
-	useEffect(() => {
-		const unlisten = history.listen((location, action) => {
-			if (location.pathname === '/') {
-				setShouldRefetchTracksValue(true);
-			}
-		});
-		return () => {
-			unlisten();
-		} 
-	});
+	// useEffect(() => {
+	// 	const unlisten = history.listen((location, action) => {
+	// 		if (location.pathname === '/') {
+	// 			setShouldRefetchTracksValue(true);
+	// 		}
+	// 	});
+	// 	return () => {
+	// 		unlisten();
+	// 	} 
+	// });
 
 	if (!audio_api) {
 		initAudio();

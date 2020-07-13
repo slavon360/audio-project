@@ -101,6 +101,10 @@
 	margin-left: 10px;
 }
 
+.PlayButton {
+	transform: translateY(-5px) scale(1.6);
+}
+
 .ArtistTitlePanel .ArtistName,
 .ArtistTitlePanel .TrackTitle {
 	color: #71829e;
