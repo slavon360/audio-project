@@ -8,24 +8,58 @@ export default class AudioService extends AudioContext {
 		this.audio_buffer = null;
 		this.audio_src = null;
 		this.source = null;
-		this.pausedAt = null;
-		this.startedAt = null;
+		this.is_playing = false;
+		this.duration = null;
+		this.current_time = 0;
+		this.interval_ref = null;
 	};
 
 	loadSrc = async url => {
 		try {
+			if (url !== this.audio_src) {
+				this.clearCurrentTime();
+			}
+
 			const response = await axios.get(url, { responseType: 'arraybuffer' });
 			this.audio_src = url;
 
-			this.decodeAudioData(response.data, decoded_buffer => {
-				this.audio_buffer = decoded_buffer;
-				this.playAudio();
-			}, err => {
-				console.error(err);
+			return new Promise((resolve, reject) => {
+				this.decodeAudioData(response.data, decoded_buffer => {
+					this.audio_buffer = decoded_buffer;
+					this.duration = Math.ceil(decoded_buffer.duration);
+
+					return resolve();
+				}, err => {
+					console.error(err);
+					reject(err);
+				});
 			});
 		} catch (error) {
 			console.error(error);
 		}
+	};
+
+	ontimeupdate = () => {
+		// should ovverride this method in instance;
+	};
+
+	onended = () => {
+		// should ovverride this method in instance;
+	};
+
+	updateCurrentTime = () => {
+		const i = 1000;
+
+		this.interval_ref = setInterval(() => {
+			this.current_time += i / 1000;
+
+			if (this.current_time >= this.duration) {
+				this.stopAudio();
+				this.onended();
+			} else {
+				this.ontimeupdate();
+			}
+		}, i);
 	};
 
 	playAudio = () => {
@@ -33,23 +67,27 @@ export default class AudioService extends AudioContext {
 
 		this.source.buffer = this.audio_buffer;
 		this.source.connect(this.destination);
+		this.is_playing = true;
 
-		if (this.pausedAt) {
-			this.startedAt = Date.now() - this.pausedAt;
-			this.source.start(0, this.pausedAt / 1000);
+		this.updateCurrentTime();
+
+		if (this.current_time) {
+			this.source.start(0, this.current_time);
 		} else {
-			this.startedAt = Date.now();
 			this.source.start(0);
 		}
 	};
 
 	stopAudio = () => {
 		this.source.stop(0);
-		this.pausedAt = Date.now() - this.startedAt;
+		this.is_playing = false;
+
+		clearInterval(this.interval_ref);
 	};
 
-	clearPausedAndStartedTime = () => {
-		this.pausedAt = null;
-		this.startedAt = null;
+	clearCurrentTime = () => {
+		this.current_time = 0;
+
+		clearInterval(this.interval_ref);
 	};
 };

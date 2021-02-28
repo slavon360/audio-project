@@ -19,7 +19,7 @@ const PlayButton = ({
 		}
 	}
 	return (
-		<button className={cx(styles.PlayButtonWrp, outer_class)} onClick={playHandler}>
+		<button playbuttonattribute="play" className={cx(styles.PlayButtonWrp, outer_class)} onClick={playHandler}>
 			{playing ?
 				<PauseIcon/> :
 				<PlayIcon/>

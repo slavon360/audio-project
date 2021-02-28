@@ -5,6 +5,7 @@ import NextButton from './components/NextButton';
 import PreviousButton from './components/PreviousButton';
 import PlayButton from './components/PlayButton';
 import ProgressBar from './components/ProgressBar';
+import Preloader from '../../components/Preloader';
 
 import PlayerContext from '../../context/player-context';
 import { getArtistNames } from '../../utils';
@@ -14,26 +15,29 @@ import styles from './AudioPlayer.module.css';
 const AudioPlayer = ({
 	current_track,
 	nextTrack,
-	previousTrack
+	previousTrack,
+	track_is_loading
 }) => {
 	const [progress_bar_width, setProgressBarWidth] = useState(0);
 	const [duration, setDuration] = useState(null);
 	const [current_time, setCurrentTime] = useState(null);
 	const [artistNames, setArtistNames] = useState(null);
+	// const [progress_time, setProgressTime] = useState(0);
+	// const [interval, setIntervalRef] = useState(null);
 	const progress_ref = useRef(null);
 	const {
 		audio_api,
 		playing_track_id,
 		playTrack,
-		pauseTrack,
-		setPlayingTrackId
+		pauseTrack
+		// setPlayingTrackId
 	} = useContext(PlayerContext);
 	const onPlayTrack = () => playTrack(current_track.fileName, current_track.id);
 	const generateTime = () => {
 		let durmin = Math.floor(audio_api.duration / 60);
 		let dursec = Math.floor(audio_api.duration - durmin * 60);
-		let curmin = Math.floor(audio_api.currentTime / 60);
-		let cursec = Math.floor(audio_api.currentTime - curmin * 60);
+		let curmin = Math.floor(audio_api.current_time / 60);
+		let cursec = Math.floor(audio_api.current_time - curmin * 60);
 
 		if (durmin < 10) {
 			durmin = `0${durmin}`;
@@ -63,16 +67,29 @@ const AudioPlayer = ({
 			progress_bar_width = 0;
 		}
 
-		audio_api.pause();
-		audio_api.currentTime = audio_api.duration * progress_bar_width / 100;
-		audio_api.play();
+		audio_api.current_time = audio_api.duration * progress_bar_width / 100;
+		audio_api.stopAudio();
+		audio_api.playAudio();
 
-		setPlayingTrackId(current_track.id);
+		// setPlayingTrackId(current_track.id);
 		setProgressBarWidth(progress_bar_width);
 	}
 	const audio_duration = audio_api.duration;
-	const audio_src = audio_api.src;
 
+	// const updateCurrentTime = () => {
+	// 	const interval = 1000;
+	// 	let cur_time = 0;
+	// 	const interval_ref = setInterval(() => {
+	// 		cur_time += interval;
+	// 		setProgressTime(cur_time);
+	// 	}, interval);
+
+	// 	setIntervalRef(interval_ref);
+	// };
+
+	// const clearIntervalRef = () => {
+	// 	clearInterval(interval);
+	// };
 	useEffect(() => {
 		if (!audio_duration) {
 			setProgressBarWidth(0);
@@ -82,30 +99,33 @@ const AudioPlayer = ({
 	useEffect(() => {
 		if (current_track && current_track.artist) {
 			const names = getArtistNames(current_track.artist);
-			console.log(names);
 			setArtistNames(names);
 		}
+		
 	}, [current_track]);
 
 	useEffect(() => {
 		// if (audio_api) {
-			console.log(audio_api.src);
 			audio_api.ontimeupdate = () => {
-				const width = 100 / audio_api.duration * audio_api.currentTime;
-	
+				const width = 100 / audio_api.duration * audio_api.current_time;
+
 				setProgressBarWidth(width);
 				generateTime();
 			};
 			audio_api.onended = () => {
-				console.log(current_track);
-				console.trace(current_track);
-				window.setTimeout(() => nextTrack(), 1000);
+				nextTrack();
 			}
 		// }
-	}, [audio_api, playing_track_id]);
+	}, [audio_api.is_playing]);
 	
 	return (
-		<div className={cx(styles.AudioPlayerWrp, { [styles.Showed]: current_track })}>
+		<div className={cx(styles.AudioPlayerWrp, {
+			[styles.Showed]: current_track,
+			[styles.TrackIsLoading]: track_is_loading
+		})}>
+			{track_is_loading && 
+				<Preloader/>
+			}
 			{current_track &&
 				<div className={styles.AudioPlayerContainer}>
 					<div className={styles.AlbumImageCover}>
@@ -134,7 +154,7 @@ const AudioPlayer = ({
 						/>
 						<PlayButton
 							outer_class={styles.PlayButton}
-							playing={playing_track_id}
+							playing={audio_api.is_playing}
 							onPlayTrack={onPlayTrack}
 							onPauseTrack={pauseTrack}
 						/>

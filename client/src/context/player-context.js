@@ -5,6 +5,7 @@ export default React.createContext({
     playing_track_id: null,
     tracks: null,
     should_refetch_tracks: false,
+    loading_track: false,
     setAudioApi: (audio_api) => {},
     setPlayingTrackId: (playing_track_id) => {},
     setTracksList: (tracks) => {},

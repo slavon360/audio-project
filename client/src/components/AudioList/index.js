@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useMemo } from 'react';
+import cx from 'classnames';
 import gql from 'graphql-tag';
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks';
 
@@ -31,13 +32,14 @@ const AudioList = ({ history }) => {
 		playing_track_id,
 		tracks: tracks_list,
 		should_refetch_tracks,
+		loading_track,
 		setTracksList,
 		playTrack,
 		pauseTrack,
 		setShouldRefetchTracksValue
 	} = useContext(PlayerContext);
 	const renderTracks = (tracks) => (
-		<div className={styles.AudioListWrp}>
+		<div className={cx(styles.AudioListWrp, {[styles.LoadingTrack]: loading_track })}>
 			{tracks.map((track, index) => (
 				<TrackPreview
 					key={track.id}

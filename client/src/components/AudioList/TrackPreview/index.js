@@ -8,7 +8,7 @@ import styles from './TrackPreview.module.css';
 
 const TrackPreview = ({
 	list_number,
-	track: { title, artist, fileName, id },
+	track: { title, artist, fileName, id, active_track },
 	playTrack,
 	pauseTrack,
 	is_playing
@@ -25,7 +25,10 @@ const TrackPreview = ({
 	
 	return (
 		<div className={styles.TrackPreviewWrp}>
-			<div className={cx(styles.TrackPreviewContainer, { [styles.Active]: is_playing})}>
+			<div className={cx(styles.TrackPreviewContainer, {
+				[styles.Playing]: is_playing,
+				[styles.Active]: active_track
+			})}>
 				<span className={styles.ListNumber}>{list_number})</span>
 				<div className={styles.ArtistTitlePanel}>
 					<div className={styles.ArtistName} title={artistNames}>{ artistNames }</div>

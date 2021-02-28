@@ -9,7 +9,10 @@
 
 .TrackPreviewContainer.Active .ArtistName,
 .TrackPreviewContainer.Active .TrackTitle,
-.TrackPreviewContainer.Active .ListNumber {
+.TrackPreviewContainer.Active .ListNumber,
+.TrackPreviewContainer.Playing .ArtistName,
+.TrackPreviewContainer.Playing .TrackTitle,
+.TrackPreviewContainer.Playing .ListNumber {
     color: #fff;
 }
 
@@ -50,7 +53,9 @@
 .PlayButton {
     cursor: pointer;
 }
-.PlayButton:hover, .TrackPreviewContainer.Active .PlayButton {
+.PlayButton:hover,
+.TrackPreviewContainer.Playing .PlayButton,
+.TrackPreviewContainer.Active .PlayButton {
     color: #a3b3ce;
 }
 
